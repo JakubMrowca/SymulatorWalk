@@ -2,12 +2,6 @@
 
 namespace ConsoleApp3._Bazowe
 {
-    class Umiejętność
-    {
-        public string Name { get; set; }
-        //public EfektZdażenie<,> Efekt { get; set; }
-        public bool MożnaAktywować { get; set; }
-    }
 
     class Przedmiot
     {

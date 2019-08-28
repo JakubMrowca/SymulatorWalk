@@ -10,7 +10,6 @@ namespace ConsoleApp3._Model
     public class Tura: Efektowny
     {
         public Pogoda Pogoda { get; set; }
-        //public List<EfektZdażenie<,>> Efekty { get; set; }
 
         public int NumerTury { get; set; }
 
@@ -86,15 +85,26 @@ namespace ConsoleApp3._Model
 
         private void WykonajRuch(Pokemon atakujący, Pokemon broniący, Walka walka)
         {
+            if (broniący.Umiejętność.Efekty != null)
+            {
+                foreach (var efekt in broniący.Umiejętność.Efekty)
+                {
+                    if (efekt.MożnaAktywować(atakujący, walka))
+                        efekt.Uaktywnij(walka,atakujący);
+                }
+            }
+
             var obrazenia = atakujący.ZadajObrażenia(broniący, walka);
             broniący.Statystyki.Życie -= obrazenia;
+
             Console.WriteLine($"{atakujący} używa ruchu {atakujący.OstatniRuch.Nazwa}. Zadaje {(int)obrazenia} obrażeń");
-            if (atakujący.OstatniRuch.Efekty != null && atakujący.OstatniRuch.Efekty.Count > 0)
+
+            if (atakujący.OstatniRuch.Efekty != null)
             {
                 foreach (var efekt in atakujący.OstatniRuch.Efekty)
                 {
-                    if (efekt.MożnaAktywować(broniący))
-                        efekt.Uaktywnij(broniący);
+                    if (efekt.MożnaAktywować(broniący,null))
+                        efekt.Uaktywnij(broniący,null);
                 }
             }
          

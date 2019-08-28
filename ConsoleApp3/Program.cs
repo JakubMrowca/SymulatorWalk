@@ -21,6 +21,10 @@ namespace ConsoleApp3
                     Przywiązanie = 0.25,
                     Typ = Typy.Elektryczny,
                     Shiny = true,
+                    Umiejętność = new Umiejętność()
+                    {
+                         Nazwa = "Static", Efekty = new List<EfektZdażenie<Pokemon, Walka>> { new NałożenieParaliżu { SzansaNaEfekt = 30, PrzyKontakcie = true } } 
+                    },
                     Statystyki = new Statystyki
                     {
                         SpAtak = 1650,

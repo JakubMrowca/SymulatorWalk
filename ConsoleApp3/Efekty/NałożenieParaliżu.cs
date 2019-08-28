@@ -6,12 +6,13 @@ using ConsoleApp3._Model;
 
 namespace ConsoleApp3.Efekty
 {
-    public class NałożenieParaliżu:EfektZdażenie<Pokemon, Pokemon>
+    public class NałożenieParaliżu:EfektZdażenie<Pokemon, Pokemon>,EfektZdażenie<Pokemon,Walka>
     {
-        public bool MożnaAktywować(Pokemon pokemon)
+        public bool MożnaAktywować(Pokemon pokemon, Pokemon pokemon2)
         {
             var random = new Random();
             var szansa = random.Next(0, 99);
+
             if (SzansaNaEfekt > szansa)
             {
                 if (pokemon.Typ != Typy.Ziemny && pokemon.Typ != Typy.Elektryczny)
@@ -22,13 +23,33 @@ namespace ConsoleApp3.Efekty
             return false;
         }
 
+        public bool PrzyKontakcie { get; set; }
         public int SzansaNaEfekt { get; set; }
 
-        public void Uaktywnij(Pokemon pokemon)
+        public void Uaktywnij(Walka element,Pokemon pokemon)
+        {
+            Uaktywnij(pokemon, pokemon);
+        }
+
+        void EfektZdażenie<Pokemon, Walka>.Dupka(Efektowny element)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Uaktywnij(Pokemon pokemon, Pokemon pokemon2)
         {
             Console.WriteLine($"{pokemon} został sparaliżowany");
             pokemon.Efekty.Add(new Paraliż(){Nazwa = "Paraliż"});
         }
 
+        public bool MożnaAktywować(Pokemon pokemon, Walka walka)
+        {
+            if (PrzyKontakcie && pokemon.OstatniRuch.Kontaktowy)
+            {
+                return MożnaAktywować(pokemon, pokemon);
+            }
+            return false;
+        }
     }
 }
+

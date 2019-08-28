@@ -12,9 +12,12 @@ namespace ConsoleApp3._Model
         public Trener Rywal { get; set; }
         private Tura AktualnaTura { get; set; }
         public bool KoniecWalki { get; set; }
+        public List<EfektyWWalce> EfektyWWalce { get; set; }
 
         public void Rozpocznij()
         {
+            EfektyWWalce = new List<EfektyWWalce>();
+            
             InicjujTrenera(Trener);
             InicjujTrenera(Rywal);
 
@@ -46,6 +49,13 @@ namespace ConsoleApp3._Model
             pokemon.Statystyki.SpObrona += statyList.Sum(x => x.SpObrona);
             pokemon.Statystyki.Obrona += statyList.Sum(x => x.Obrona);
             pokemon.Statystyki.Szybkość += statyList.Sum(x => x.Szybkość);
+
+            AktywujUmiejętność(trener);
+        }
+
+        private void AktywujUmiejętność(Trener trener)
+        {
+            throw new System.NotImplementedException();
         }
 
         public void NastępnaTura()
