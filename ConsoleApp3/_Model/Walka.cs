@@ -1,12 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using ConsoleApp3.Efekty;
+using ConsoleApp3.Eventy;
 using ConsoleApp3.Pomoce;
 
 namespace ConsoleApp3._Model
 {
     public class Walka: Efektowny
     {
+        public Walka()
+        {
+            Disposables = new List<IDisposable>();
+            
+        }
+
+        private List<IDisposable> Disposables { get; set; }
         public List<Tura> Tury { get; set; }
         public Trener Trener { get; set; }
         public Trener Rywal { get; set; }
@@ -14,13 +25,23 @@ namespace ConsoleApp3._Model
         public bool KoniecWalki { get; set; }
         public List<EfektyWWalce> EfektyWWalce { get; set; }
 
+        private List<Pokemon> PokemonyWWalce { get; set; }
+
+        private readonly Subject<Zdarzenie> _walka = new Subject<Zdarzenie>();
+        public IObservable<Zdarzenie> Walk
+        {
+            get { return _walka; }
+        }
         public void Rozpocznij()
         {
+
+            PokemonyWWalce = new List<Pokemon>{Trener.Pokemon,Rywal.Pokemon};
             EfektyWWalce = new List<EfektyWWalce>();
             
             InicjujTrenera(Trener);
             InicjujTrenera(Rywal);
 
+            Subskrybuj();
             Tury = new List<Tura>();
             var pierwszaTura = new Tura(1);
             AktualnaTura = pierwszaTura;
@@ -31,6 +52,43 @@ namespace ConsoleApp3._Model
                 var nextTura = new Tura(AktualnaTura.NumerTury + 1);
                 AktualnaTura = nextTura;
                 nextTura.Start(this);
+            }
+        }
+
+        public void ZakończWalke()
+        {
+            KoniecWalki = true;
+            Disposuj();
+        }
+
+        private void Disposuj()
+        {
+            foreach (var disposable in Disposables)
+            {
+                disposable.Dispose();
+            }
+        }
+
+        private void Subskrybuj()
+        {
+            var potok = Trener.Pokemon.Atakuje.Merge(Rywal.Pokemon.Atakuje).Subscribe(data => Zaatakował(data));
+
+            Disposables.Add(potok);
+            //Disposables.Add(potok2);
+
+        }
+
+        private void Zaatakował(PokemonAtakuje atakuje)
+        {
+            var ZabierzŻycie = PokemonyWWalce.FirstOrDefault(x => x.Name == atakuje.KogoAtakuje);
+            ZabierzŻycie.Statystyki.Życie -= atakuje.Obrażenia;
+
+            Console.WriteLine($"{atakuje}");
+
+            if (ZabierzŻycie.Statystyki.Życie <= 0)
+            {
+                _walka.OnNext(new WalkaZakończona{Walka = this});
+                Console.WriteLine($"{ZabierzŻycie.Name} Pada na ziemie. Wygrywa {atakuje.Nazwa}");
             }
         }
 
@@ -55,7 +113,7 @@ namespace ConsoleApp3._Model
 
         private void AktywujUmiejętność(Trener trener)
         {
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
 
         public void NastępnaTura()

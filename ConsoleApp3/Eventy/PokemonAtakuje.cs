@@ -10,6 +10,13 @@ namespace ConsoleApp3.Eventy
     {
         public double Obrażenia;
         public string Nazwa;
+        public string NazwaRuchu;
+        public string KogoAtakuje;
+
+        public override string ToString()
+        {
+            return $"Pokemon {Nazwa} używa ruchu {NazwaRuchu}. Zadaje {Obrażenia} obrażeń";
+        }
     }
     public class NałóżEfekt
     {

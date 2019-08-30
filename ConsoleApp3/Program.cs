@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive.Linq;
 using ConsoleApp3._Bazowe;
 using ConsoleApp3._Model;
 using ConsoleApp3.Efekty;
+using ConsoleApp3.Eventy;
 
 namespace ConsoleApp3
 {
@@ -23,7 +25,7 @@ namespace ConsoleApp3
                     Shiny = true,
                     Umiejętność = new Umiejętność()
                     {
-                         Nazwa = "Static", Efekty = new List<EfektZdażenie<Pokemon, Walka>> { new NałożenieParaliżu { SzansaNaEfekt = 30, PrzyKontakcie = true } } 
+                         //Nazwa = "Static", Efekty = new List<EfektZdażenie<Pokemon, Walka>> { new NałożenieParaliżu { SzansaNaEfekt = 30, PrzyKontakcie = true } } 
                     },
                     Statystyki = new Statystyki
                     {
@@ -135,9 +137,15 @@ namespace ConsoleApp3
                 Rywal = brains
             };
 
+            var potok = walka.Walk.Where(x => x is WalkaZakończona).Subscribe(data => WalkaKoniec(data));
             walka.Rozpocznij();
 
             Console.WriteLine("Hello World!");
+        }
+
+        private static void WalkaKoniec(Zdarzenie zdarzenie)
+        {
+            zdarzenie.Walka.ZakończWalke();
         }
 
         private static List<Odporność> RajczuOdporności = new List<Odporność>(

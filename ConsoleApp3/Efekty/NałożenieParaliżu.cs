@@ -6,7 +6,7 @@ using ConsoleApp3._Model;
 
 namespace ConsoleApp3.Efekty
 {
-    public class NałożenieParaliżu:EfektZdażenie<Pokemon, Pokemon>,EfektZdażenie<Pokemon,Walka>
+    public class NałożenieParaliżu:EfektZdażenie<Pokemon, Pokemon>
     {
         public bool MożnaAktywować(Pokemon pokemon, Pokemon pokemon2)
         {
@@ -31,10 +31,6 @@ namespace ConsoleApp3.Efekty
             Uaktywnij(pokemon, pokemon);
         }
 
-        void EfektZdażenie<Pokemon, Walka>.Dupka(Efektowny element)
-        {
-            throw new NotImplementedException();
-        }
 
         public void Uaktywnij(Pokemon pokemon, Pokemon pokemon2)
         {
@@ -42,14 +38,6 @@ namespace ConsoleApp3.Efekty
             pokemon.Efekty.Add(new Paraliż(){Nazwa = "Paraliż"});
         }
 
-        public bool MożnaAktywować(Pokemon pokemon, Walka walka)
-        {
-            if (PrzyKontakcie && pokemon.OstatniRuch.Kontaktowy)
-            {
-                return MożnaAktywować(pokemon, pokemon);
-            }
-            return false;
-        }
     }
 }
 

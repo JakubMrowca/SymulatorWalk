@@ -16,7 +16,7 @@ namespace ConsoleApp3.Efekty
 
         int SzansaNaEfekt { get; set; }
         void Uaktywnij(KGdzie element, TDlaczego element2);
-        Efekt Efekt { get; set; }
+        //Efekt Efekt { get; set; }
     }
 
     //public class WydłużeniePogody:Efekt

@@ -29,22 +29,19 @@ namespace ConsoleApp3._Model
             InitTuraEfekt(AtakujePierwszy);
             InitTuraEfekt(AtakujeDrugi);
 
-            var rezultat = PróbujZabić(AtakujePierwszy, AtakujeDrugi, walka);
-          
-            if (rezultat)
-                return;
-
+            PróbujZabić(AtakujePierwszy, AtakujeDrugi, walka);
             PróbujZabić(AtakujeDrugi, AtakujePierwszy, walka);
             
         }
 
-        private bool PróbujZabić(Pokemon atakujący, Pokemon broniący, Walka walka)
+        private void PróbujZabić(Pokemon atakujący, Pokemon broniący, Walka walka)
         {
-            var result = false;
+            if (walka.KoniecWalki)
+                return;
+
             var blokowanieAtaków = new BlokowanieAtaków();
             if (!blokowanieAtaków.ZablokujAtak(atakujący, broniący, walka))
             {
-
                 var obliczCelnośc = new CelowanieRuchami();
                 var random = new Random();
 
@@ -55,14 +52,7 @@ namespace ConsoleApp3._Model
                     WykonajRuch(atakujący, broniący, walka);
                 else
                     Console.WriteLine($"{atakujący} używa ruchu {atakujący.OstatniRuch.Nazwa}. Jednak pudłuję");
-
-                if (broniący.Statystyki.Życie < 0)
-                {
-                    ZakończWalke(broniący, atakujący, walka);
-                    result = true;
-                }
             }
-            return result;
         }
 
         private void InitTuraEfekt(Pokemon atakujący)
@@ -85,19 +75,20 @@ namespace ConsoleApp3._Model
 
         private void WykonajRuch(Pokemon atakujący, Pokemon broniący, Walka walka)
         {
-            if (broniący.Umiejętność.Efekty != null)
-            {
-                foreach (var efekt in broniący.Umiejętność.Efekty)
-                {
-                    if (efekt.MożnaAktywować(atakujący, walka))
-                        efekt.Uaktywnij(walka,atakujący);
-                }
-            }
+            //if (broniący.Umiejętność.Efekty != null)
+            //{
+            //    foreach (var efekt in broniący.Umiejętność.Efekty)
+            //    {
+            //        if (efekt.MożnaAktywować(atakujący, walka))
+            //            efekt.Uaktywnij(walka,atakujący);
+            //    }
+            //}
 
-            var obrazenia = atakujący.ZadajObrażenia(broniący, walka);
-            broniący.Statystyki.Życie -= obrazenia;
+            atakujący.Atakuj(broniący, walka);
+            //var obrazenia = atakujący.ZadajObrażenia(broniący, walka);
+            //broniący.Statystyki.Życie -= obrazenia;
 
-            Console.WriteLine($"{atakujący} używa ruchu {atakujący.OstatniRuch.Nazwa}. Zadaje {(int)obrazenia} obrażeń");
+            //Console.WriteLine($"{atakujący} używa ruchu {atakujący.OstatniRuch.Nazwa}. Zadaje {(int)obrazenia} obrażeń");
 
             if (atakujący.OstatniRuch.Efekty != null)
             {
@@ -135,7 +126,6 @@ namespace ConsoleApp3._Model
                 {
                     AtakujePierwszy = walka.Rywal.Pokemon;
                     AtakujeDrugi = walka.Trener.Pokemon;
-
                 }
             }
             else if (priorytetRuchRywal > priorytetRuchTrener)

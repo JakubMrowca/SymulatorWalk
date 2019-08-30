@@ -26,7 +26,7 @@ namespace ConsoleApp3._Model
 
         private readonly Subject<PokemonAtakuje> _atakujeSkurczybyk = new Subject<PokemonAtakuje>();
         private readonly Subject<NałóżEfekt> _rzucaZaklęciaSkurczybyk = new Subject<NałóżEfekt>();
-        public IObservable<PokemonAtakuje> Ataki
+        public IObservable<PokemonAtakuje> Atakuje
         {
             get { return _atakujeSkurczybyk; }
         }
@@ -35,44 +35,46 @@ namespace ConsoleApp3._Model
             get { return _rzucaZaklęciaSkurczybyk; }
         }
 
-        private void Atakuj(Pokemon atakowany, Walka walka)
+        public void Atakuj(Pokemon atakowany, Walka walka)
         {
              AktywujBonusy(atakowany);
             _atakujeSkurczybyk.OnNext(new PokemonAtakuje
             {
                 Nazwa = Name,
+                KogoAtakuje = atakowany.Name,
+                NazwaRuchu = OstatniRuch.Nazwa,
                 Obrażenia = ZadajObrażenia(atakowany,walka)
             });
         }
 
         private void AktywujBonusy(Pokemon atakowany)
         {
-            if (OstatniRuch.Efekty != null)
-            {
-                foreach (var efektZdażeny in OstatniRuch.Efekty)
-                {
-                    if (efektZdażeny.MożnaAktywować(atakowany, null))
-                    {
-                        _rzucaZaklęciaSkurczybyk.OnNext(new NałóżEfekt
-                        {
-                            Efekt = efektZdażeny.Uaktywnij(atakowany),
-                            NałóżNa = atakowany,
-                        });
-                    }
-                }
+            //if (OstatniRuch.Efekty != null)
+            //{
+            //    foreach (var efektZdażeny in OstatniRuch.Efekty)
+            //    {
+            //        if (efektZdażeny.MożnaAktywować(atakowany, null))
+            //        {
+            //            _rzucaZaklęciaSkurczybyk.OnNext(new NałóżEfekt
+            //            {
+            //                Efekt = efektZdażeny.Uaktywnij(atakowany, this),
+            //                NałóżNa = atakowany,
+            //            });
+            //        }
+            //    }
 
                
-            }
+            //}
 
-            if (atakowany.Umiejętność.WystąpiłBonus())
-            {
-                _rzucaZaklęciaSkurczybyk.OnNext(new NałóżEfekt
-                {
-                    Efekt = Umiejętność.Efekt,
-                    NałóżNa = this,
-                    ModyfikatorObrażeń = 2
-                });
-            }
+            //if (atakowany.Umiejętność.WystąpiłBonus())
+            //{
+            //    _rzucaZaklęciaSkurczybyk.OnNext(new NałóżEfekt
+            //    {
+            //        Efekt = Umiejętność.Efekt,
+            //        NałóżNa = this,
+            //        ModyfikatorObrażeń = 2
+            //    });
+            //}
         }
 
         public double Celność = 100;
